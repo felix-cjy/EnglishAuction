@@ -64,5 +64,3 @@ $ forge --help
 $ anvil --help
 $ cast --help
 ```
-
-使用 `block.timestamp` 可能被矿工操纵，考虑使用 Chainlink 的 VRF 来获取更安全的时间戳。
