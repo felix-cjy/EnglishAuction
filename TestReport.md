@@ -1,9 +1,10 @@
 ```bash
 $ forge test --gas-report
+[⠰] Compiling...
+[⠔] Compiling 2 files with Solc 0.8.25
+[⠒] Solc 0.8.25 finished in 5.06s
+Compiler run successful!
 
-$ forge test --gas-report
-[⠆] Compiling...
-No files changed, compilation skipped
 
 Ran 10 tests for test/Auction.t.sol:AuctionTest
 [PASS] testFail_BidTooLow() (gas: 50065)
@@ -16,7 +17,7 @@ Ran 10 tests for test/Auction.t.sol:AuctionTest
 [PASS] test_InitialState() (gas: 33040)
 [PASS] test_MultipleBids() (gas: 145308)
 [PASS] test_WithdrawBid() (gas: 169765)
-Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 7.80ms (26.98ms CPU time)
+Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 6.94ms (26.17ms CPU time)
 | src/Auction.sol:Auction contract |                 |       |        |       |         |
 |----------------------------------|-----------------|-------|--------|-------|---------|
 | Deployment Cost                  | Deployment Size |       |        |       |         |
@@ -37,19 +38,17 @@ Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 7.80ms (26.98ms CP
 | withdrawBid                      | 28487           | 30771 | 30771  | 33055 | 2       |
 
 
-| test/mocks/MockERC721.sol:MockERC721 contract |                 |       |        |       |        |
-|-----------------------------------------------|-----------------|-------|--------|-------|--------|
-| Deployment Cost                               | Deployment Size |       |        |       |        |
-| 966333                                        | 4872            |       |        |       |        |
-| Function Name                                 | min             | avg   | median | max   |
-# calls |
-| approve                                       | 48624           | 48624 | 48624  | 48624 |10      |
-| mint                                          | 68767           | 68767 | 68767  | 68767 |10      |
-| ownerOf                                       | 576             | 1076  | 576    | 2576  |4       |
+| test/mocks/MockERC721.sol:MockERC721 contract |                 |       |        |       |         |
+|-----------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                               | Deployment Size |       |        |       |         |
+| 966333                                        | 4872            |       |        |       |         |
+| Function Name                                 | min             | avg   | median | max   | # calls |
+| approve                                       | 48624           | 48624 | 48624  | 48624 | 10      |
+| mint                                          | 68767           | 68767 | 68767  | 68767 | 10      |
+| ownerOf                                       | 576             | 1076  | 576    | 2576  | 4       |
 
 
 
 
-Ran 1 test suite in 29.80ms (7.80ms CPU time): 10 tests passed, 0 failed, 0 skipped (10 total tests)
-
+Ran 1 test suite in 24.14ms (6.94ms CPU time): 10 tests passed, 0 failed, 0 skipped (10 total tests)
 ```

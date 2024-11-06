@@ -46,8 +46,7 @@ contract Auction is IERC721Receiver, IERC165, ReentrancyGuard {
         uint256 _tokenId,
         uint256 _startingBid,
         uint256 _biddingtime,
-        uint256 _minBidIncrement,
-        bytes memory /* data */
+        uint256 _minBidIncrement
     ) {
         if (_biddingtime < 1 hours) revert BiddingTimeTooShort();
 
