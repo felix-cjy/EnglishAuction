@@ -6,7 +6,7 @@ import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Recei
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-contract Auction is IERC721Receiver, ReentrancyGuard {
+contract Auction is IERC721Receiver, IERC165, ReentrancyGuard {
     error TooEarlyToEnd();
     error BidNotHighEnough();
     error NothingToWithdraw();
@@ -20,6 +20,7 @@ contract Auction is IERC721Receiver, ReentrancyGuard {
     error InvalidTokenId();
     error OnlySellerCanCancel();
     error AuctionNotStarted();
+    error AuctionAlreadyStarted();
 
     address public immutable i_seller;
     address public immutable i_ERC721;
@@ -46,23 +47,26 @@ contract Auction is IERC721Receiver, ReentrancyGuard {
         uint256 _startingBid,
         uint256 _biddingtime,
         uint256 _minBidIncrement,
-        bytes calldata data
+        bytes memory /* data */
     ) {
         if (_biddingtime < 1 hours) revert BiddingTimeTooShort();
-
-        IERC721(_erc721Address).safeTransferFrom(msg.sender, address(this), _tokenId, data);
 
         i_seller = msg.sender;
         i_ERC721 = _erc721Address;
         i_tokenId = _tokenId;
         i_minBidIncrement = _minBidIncrement;
 
-        s_started = true;
-        s_endTimestamp = block.timestamp + _biddingtime;
-        s_highestBidder = msg.sender;
         s_highestBid = _startingBid;
+        s_endTimestamp = block.timestamp + _biddingtime;
+    }
 
-        emit AuctionStarted(_tokenId, s_endTimestamp);
+    function startAuction() external {
+        if (msg.sender != i_seller) revert OnlySellerCanCancel();
+        if (s_started) revert AuctionAlreadyStarted();
+
+        s_started = true;
+        IERC721(i_ERC721).safeTransferFrom(msg.sender, address(this), i_tokenId, "");
+        emit AuctionStarted(i_tokenId, s_endTimestamp);
     }
 
     function bid() external payable nonReentrant {
@@ -96,7 +100,6 @@ contract Auction is IERC721Receiver, ReentrancyGuard {
     }
 
     function endAuction() public nonReentrant {
-        // 拍卖要已经开始, 当前时间超过结束时间
         if (!s_started) revert AuctionNotStarted();
         if (s_ended) revert Error_AuctionEnded();
         if (block.timestamp < s_endTimestamp) revert TooEarlyToEnd();
@@ -124,8 +127,9 @@ contract Auction is IERC721Receiver, ReentrancyGuard {
         emit AuctionCancelled();
     }
 
-    function onERC721Received(address operator, address from, uint256 _tokenId, bytes calldata data)
+    function onERC721Received(address, address, uint256 _tokenId, bytes calldata)
         external
+        view
         override
         returns (bytes4)
     {
@@ -135,7 +139,7 @@ contract Auction is IERC721Receiver, ReentrancyGuard {
         return IERC721Receiver.onERC721Received.selector;
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
         return interfaceId == type(IERC721Receiver).interfaceId || interfaceId == type(IERC165).interfaceId;
     }
 }

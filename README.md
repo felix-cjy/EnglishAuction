@@ -25,6 +25,7 @@ $ forge build
 
 ```shell
 $ forge test
+$ forge test --gas-report
 ```
 
 ### Format
